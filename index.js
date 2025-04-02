@@ -15,6 +15,14 @@ app.use(cors());
 
 await connectDB();
 
+app.use('/', (req, res) => {
+  res.send('Welcome to RugSimple');
+});
+
+app.use('/health-check', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 app.use('/api', authRoutes);
 app.use('/api', dataRoutes);
 app.use('/admin', adminRoutes);
