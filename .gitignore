@@ -2,3 +2,6 @@ nodemon.json
 node_modules
 .env
 .env.*
+
+# App Runner config
+apprunner.*
