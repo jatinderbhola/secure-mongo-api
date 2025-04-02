@@ -15,14 +15,6 @@ app.use(cors());
 
 await connectDB();
 
-app.use('/', (req, res) => {
-  res.send('Welcome to RugSimple');
-});
-
-app.use('/health-check', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-});
-
 app.use('/api', authRoutes);
 app.use('/api', dataRoutes);
 app.use('/admin', adminRoutes);
@@ -57,6 +49,15 @@ app.use((err, req, res, _next) => {
   const message = err.message || 'Something went wrong';
 
   res.status(status).json({ error: message });
+});
+
+// Health check route
+app.use('/health-check', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+app.use('/', (req, res) => {
+  res.send('Welcome to RugSimple');
 });
 
 const PORT = process.env.PORT || 3000;
