@@ -1,5 +1,5 @@
 version: 1.0
-runtime: nodejs20
+runtime: nodejs18
 
 build:
   commands:
@@ -9,4 +9,4 @@ build:
 run:
   command: npm start
   network:
-    port: 3000
+    port: 8080
