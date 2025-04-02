@@ -25,9 +25,13 @@ const clientSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  apiKeyHash: String,
-  allowedOrigins: [String],
-  allowedCallbacks: [String]
+  apiKeyHash: {
+    type: String,
+    index: true,
+    unique: true,
+    required: true
+  },
+  allowedOrigins: [String]
 });
 
 export const Client = mongoose.model('Client', clientSchema);

@@ -1,15 +1,16 @@
 import express from 'express';
 const router = express.Router();
 import { Client } from '../models/client.js';
-import { hashApiKey } from '../utils/hash.js';
+import { generateApiKey, hashApiKey } from '../utils/hash.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { useDb } from '../db.js';
 
 router.post(
   '/create-client',
   asyncHandler(async (req, res) => {
-    const { name, email, apiKey, allowedOrigins, allowedCallbacks } = req.body;
+    const { name, email, allowedOrigins } = req.body;
 
+    const apiKey = await generateApiKey();
     const apiKeyHash = await hashApiKey(apiKey);
 
     // Fetch the portal database using the email
@@ -37,7 +38,6 @@ router.post(
       email,
       apiKeyHash,
       allowedOrigins,
-      allowedCallbacks,
       // Portal reference
       companyName: portal.company.name,
       portalRef: portal._id,
@@ -45,7 +45,13 @@ router.post(
     });
 
     await client.save();
-    res.status(201).json({ message: 'Client created successfully' });
+    res.status(201).json({
+      message: 'Client created successfully',
+      data: {
+        API_KEY: apiKey,
+        companyName: portal.company.name
+      }
+    });
   })
 );
 
