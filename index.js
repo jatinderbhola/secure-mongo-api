@@ -5,6 +5,7 @@ import { connectDB } from './db.js';
 
 import authRoutes from './routes/auth.js';
 import dataRoutes from './routes/data.js';
+import clientRoutes from './routes/client.js';
 import adminRoutes from './routes/admin.js';
 
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(cors());
 await connectDB();
 
 app.use('/api', authRoutes);
+app.use('/api', clientRoutes);
 app.use('/api', dataRoutes);
 app.use('/admin', adminRoutes);
 
