@@ -4,11 +4,11 @@ const router = express.Router();
 import { asyncHandler } from '../utils/asyncHandler.js';
 
 import { Client } from '../models/client.js';
-import { authenticateClient } from '../middleware/auth.js';
+// import { authenticateClient } from '../middleware/auth.js';
 
 router.delete(
   '/client',
-  authenticateClient,
+  // authenticateClient,
   asyncHandler(async (req, res) => {
     const { email } = req.query;
 

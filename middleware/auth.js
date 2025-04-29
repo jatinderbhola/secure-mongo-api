@@ -7,7 +7,7 @@ export const authenticateClient = async (req, res, next) => {
 
   if (!apiKey) return res.status(401).json({ error: 'Missing API Key' });
 
-  const clients = await Client.find({});
+  const clients = await Client.find({}).lean();
   const client = await Promise.any(
     clients.map(async (c) => {
       if (await verifyApiKey(apiKey, c.apiKeyHash)) return c;
