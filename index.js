@@ -16,16 +16,23 @@ app.use(cors());
 
 await connectDB();
 
+// Application routes
 app.use('/api', authRoutes);
 app.use('/api', clientRoutes);
 app.use('/api', dataRoutes);
 app.use('/admin', adminRoutes);
 
+// Health check
+app.get('/health-check', (req, res) => res.status(200).json({ status: 'ok' }));
+
+// Root path (homepage only)
+app.get('/', (req, res) => res.send(`Welcome to RugSimple ${process.env.NODE_ENV} API`));
+
 // Unmatched API/Admin route fallback
 app.use('/api/*', (req, res) => res.status(404).json({ error: 'API Route Not Found' }));
 app.use('/admin/*', (req, res) => res.status(404).json({ error: 'Admin Route Not Found' }));
 
-// Global error handler (keep this after routes)
+// Global error handler
 app.use((err, req, res, _next) => {
   console.error('[ERROR]', err);
 
@@ -48,13 +55,10 @@ app.use((err, req, res, _next) => {
   res.status(status).json({ error: message });
 });
 
-// Health check and root route
-app.use('/health-check', (req, res) => res.status(200).json({ status: 'ok' }));
-app.use('/', (req, res) => res.send(`Welcome to RugSimple ${process.env.NODE_ENV} API`));
-
-// Fallback for all other routes
+// Catch-all for everything else
 app.use((req, res) => {
-  res.status(404).json({ error: 'Not Found' });
+  console.warn('[404 Not Found]', req.method, req.originalUrl);
+  res.status(404).json({ error: 'Route Not Found' });
 });
 
 const PORT = process.env.PORT || 3000;
