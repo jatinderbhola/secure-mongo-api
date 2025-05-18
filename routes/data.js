@@ -4,7 +4,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 
 import { validateDataRequest } from '../utils/request.js';
 import { sendPaginatedResponse } from '../utils/response.js';
-import { fetch } from '../services/data-fetcher.js';
+import { fetch, fetchIds } from '../services/data-fetcher.js';
 import { useDb } from '../db.js';
 
 const router = express.Router();
@@ -45,6 +45,41 @@ router.get(
     sendPaginatedResponse(res, {
       data: pagedData,
       pagination: { total, limit, skip, model },
+      clientInfo: { name: req.user.name }
+    });
+  })
+);
+
+router.post(
+  '/:model',
+  verifyJwt,
+  asyncHandler(async (req, res) => {
+    const { model, ids } = validateDataRequest({ ...req.query, ...req.params, ...req.body });
+    if (
+      !ids ||
+      !Array.isArray(ids) ||
+      ids.length === 0 ||
+      ids.some((id) => typeof id !== 'string')
+    ) {
+      return res
+        .status(400)
+        .json({ error: `Missing or invalid ids in the body. ids should be array of string.` });
+    }
+    if (!model) {
+      return res.status(400).json({ error: 'Missing model in the query' });
+    }
+    //TODO: This is due to a API specification typo provided by us to simon. Should be fixed in the future
+    const parsedModel = model === 'rugs' ? 'rug' : model;
+    if (parsedModel !== 'rug') {
+      return res.status(400).json({ error: `Invalid model : ${parsedModel}` });
+    }
+
+    const clientDb = await useDb(req.user.database);
+    const { pagedData, total } = await fetchIds(clientDb, parsedModel, ids);
+
+    sendPaginatedResponse(res, {
+      data: pagedData,
+      pagination: { total, limit: null, skip: null, model },
       clientInfo: { name: req.user.name }
     });
   })
