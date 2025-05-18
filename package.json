@@ -11,7 +11,9 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "format": "prettier --write .",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "docker-build": "docker build -t rugsimple-secure-mongo-api .",
+    "docker-run": "docker run -p 8080:8080  --env-file .env -e PORT=8080 rugsimple-secure-mongo-api"
   },
   "lint-staged": {
     "*.js": [
