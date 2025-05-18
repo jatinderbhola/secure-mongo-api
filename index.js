@@ -21,45 +21,40 @@ app.use('/api', clientRoutes);
 app.use('/api', dataRoutes);
 app.use('/admin', adminRoutes);
 
-// Global error handler
+// Unmatched API/Admin route fallback
+app.use('/api/*', (req, res) => res.status(404).json({ error: 'API Route Not Found' }));
+app.use('/admin/*', (req, res) => res.status(404).json({ error: 'Admin Route Not Found' }));
+
+// Global error handler (keep this after routes)
 app.use((err, req, res, _next) => {
   console.error('[ERROR]', err);
 
-  // MongoDB duplicate key error (code 11000)
   if (err.name === 'MongoServerError' && err.code === 11000) {
-    return res.status(409).json({
-      error: 'Duplicate key error',
-      details: err.keyValue || err.message
-    });
+    return res
+      .status(409)
+      .json({ error: 'Duplicate key error', details: err.keyValue || err.message });
   }
 
-  // Mongoose validation error
   if (err.name === 'ValidationError') {
-    return res.status(400).json({
-      error: 'Validation failed',
-      details: err.errors
-    });
+    return res.status(400).json({ error: 'Validation failed', details: err.errors });
   }
 
-  // JWT error
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({ error: 'Invalid token' });
   }
 
-  // Handle other errors
   const status = err.status || 500;
   const message = err.message || 'Something went wrong';
-
   res.status(status).json({ error: message });
 });
 
-// Health check route
-app.use('/health-check', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-});
+// Health check and root route
+app.use('/health-check', (req, res) => res.status(200).json({ status: 'ok' }));
+app.use('/', (req, res) => res.send(`Welcome to RugSimple ${process.env.NODE_ENV} API`));
 
-app.use('/', (req, res) => {
-  res.send('Welcome to RugSimple');
+// Fallback for all other routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not Found' });
 });
 
 const PORT = process.env.PORT || 3000;
