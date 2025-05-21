@@ -5,7 +5,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { validateDataRequest } from '../utils/request.js';
 import { sendPaginatedResponse } from '../utils/response.js';
 import { fetch, fetchIds } from '../services/data-fetcher.js';
-import { useDb } from '../db.js';
+import { useDb } from '../utils/db.js';
 
 const router = express.Router();
 

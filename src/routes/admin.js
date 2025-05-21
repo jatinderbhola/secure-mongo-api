@@ -3,7 +3,7 @@ const router = express.Router();
 import { Client } from '../models/client.js';
 import { generateApiKey, hashApiKey } from '../utils/hash.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { useDb } from '../db.js';
+import { useDb } from '../utils/db.js';
 
 router.post(
   '/create-client',

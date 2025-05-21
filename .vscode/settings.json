@@ -1,3 +1,12 @@
 {
-  "cSpell.words": ["nodemon", "rugsimple"]
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.validate": [
+    "typescript",
+    "javascript"
+  ],
+  "cSpell.words": [
+    "nodemon",
+    "rugsimple"
+  ]
 }
